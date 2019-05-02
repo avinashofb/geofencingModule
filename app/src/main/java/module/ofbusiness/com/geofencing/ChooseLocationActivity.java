@@ -41,6 +41,8 @@ import app.ofbusiness.com.geofencing.module.GeoFencingHelperModule;
 import app.ofbusiness.com.geofencing.module.GeoFencingPermissionModule;
 import app.ofbusiness.com.geofencing.utils.MapUtils;
 
+import static app.ofbusiness.com.geofencing.utils.MapUtils.areThereMockPermissionApps;
+
 public class ChooseLocationActivity extends AppCompatActivity implements MapWrapperLayout.OnDragListener, OnMapReadyCallback {
 
     private GoogleMap googleMap;
@@ -91,11 +93,12 @@ public class ChooseLocationActivity extends AppCompatActivity implements MapWrap
             }
         });
 
-        if (MapUtils.areThereMockPermissionApps(this)) {
+        String mockApplicationApps = MapUtils.areThereMockPermissionApps(this);
+        if (mockApplicationApps != null) {
             android.app.AlertDialog.Builder alertBuilder = new android.app.AlertDialog.Builder(this);
             alertBuilder.setCancelable(false);
-            alertBuilder.setTitle("Uninstall GPS spoofing Application !");
-            alertBuilder.setMessage("Uninstall GPS Spoofing Application and disable GPS Spoofing permission.");
+            alertBuilder.setTitle("Uninstall "+mockApplicationApps+" app !");
+            alertBuilder.setMessage("Your device is using "+mockApplicationApps+" app for location spoofing. Please Uninstall and disable GPS spoofing permission.");
             android.app.AlertDialog alert = alertBuilder.create();
             alert.show();
         }

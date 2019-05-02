@@ -33,7 +33,6 @@ public class MapUtils {
 
     public static String getCompleteAddress(double latitude, double longitude, Context context) {
         StringBuilder address = new StringBuilder();
-        address.append("Address - ");
         Geocoder geocoder = new Geocoder(context, Locale.getDefault());
         try {
             List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
@@ -121,9 +120,10 @@ public class MapUtils {
             return true;
     }
 
-    public static boolean areThereMockPermissionApps(Context context) {
+    public static String areThereMockPermissionApps(Context context) {
         int count = 0;
 
+        String applicationName = "";
         PackageManager pm = context.getPackageManager();
         List<ApplicationInfo> packages =
                 pm.getInstalledApplications(PackageManager.GET_META_DATA);
@@ -141,6 +141,7 @@ public class MapUtils {
                         if (requestedPermissions[i].equals("android.permission.ACCESS_MOCK_LOCATION") && !applicationInfo.packageName.equals(context.getPackageName())) {
                             if(!(applicationInfo.packageName.contains("com.android"))) {
                                 count++;
+                                applicationName = (String) pm.getApplicationLabel(pm.getApplicationInfo(applicationInfo.packageName, PackageManager.GET_META_DATA));
                             }
                         }
                     }
@@ -151,8 +152,8 @@ public class MapUtils {
         }
 
         if (count > 0)
-            return true;
-        return false;
+            return applicationName;
+        return null;
     }
 
     public static LatLng getGeoTaggedCoordinatesFromImage(File finalFile){
