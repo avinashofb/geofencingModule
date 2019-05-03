@@ -8,6 +8,6 @@ public interface LocationPickerListener {
 
     void markerNotInSelectedRegion();
 
-    void getAddressByCoordinates();
+    void getAddressByCoordinates(String completeAddress);
 
 }

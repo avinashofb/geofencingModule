@@ -88,7 +88,7 @@ public class GeoFencingHelperModule {
                     completeAddress += "," + addressIndex3;
                 }
                 if (completeAddress != null) {
-                    locationPickerListener.getAddressByCoordinates();
+                    locationPickerListener.getAddressByCoordinates(completeAddress);
                 }
             }
         }

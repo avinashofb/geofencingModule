@@ -220,7 +220,7 @@ public class ChooseLocationActivity extends AppCompatActivity implements MapWrap
         }
 
         @Override
-        public void getAddressByCoordinates() {
+        public void getAddressByCoordinates(String completeAddress) {
 
         }
     }, googleMap, ChooseLocationActivity.this, 100, lastKnownLocation);
