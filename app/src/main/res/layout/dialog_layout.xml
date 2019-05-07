@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="20dp"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Uninstall location spoofing apps"
+        android:textColor="#000000"
+        android:textSize="20dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:text="This feature is not supported when mock locations are turned on. Please go to your settings and turn them off to continue."
+        android:textColor="#404040"
+        android:textSize="16dp"
+        android:textStyle="normal" />
+
+
+    <TextView
+        android:id="@+id/apps_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="App name"
+        android:textColor="#404040"
+        android:textSize="16dp"
+        android:textStyle="normal" />
+
+    <Button
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="OK" />
+
+</LinearLayout>

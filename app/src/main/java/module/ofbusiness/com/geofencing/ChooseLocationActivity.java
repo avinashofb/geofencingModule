@@ -11,6 +11,7 @@ import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -93,13 +94,22 @@ public class ChooseLocationActivity extends AppCompatActivity implements MapWrap
             }
         });
 
-        String mockApplicationApps = MapUtils.areThereMockPermissionApps(this);
-        if (mockApplicationApps != null) {
-            android.app.AlertDialog.Builder alertBuilder = new android.app.AlertDialog.Builder(this);
+        List<String> mockApplicationApps = MapUtils.areThereMockPermissionApps(this);
+        if (mockApplicationApps != null && mockApplicationApps.size() > 0) {
+            AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
+            LayoutInflater inflater = this.getLayoutInflater();
+            View dialogView= inflater.inflate(R.layout.dialog_layout, null);
+            TextView allAppsName = (TextView)dialogView.findViewById(R.id.apps_name);
+            alertBuilder.setView(dialogView);
             alertBuilder.setCancelable(false);
-            alertBuilder.setTitle("Uninstall "+mockApplicationApps+" app !");
-            alertBuilder.setMessage("Your device is using "+mockApplicationApps+" app for location spoofing. Please Uninstall and disable GPS spoofing permission.");
-            android.app.AlertDialog alert = alertBuilder.create();
+
+            StringBuilder appNames = new StringBuilder();
+            appNames.append(" Uninstall the following apps: \n\n");
+            for(int i=0; i<= mockApplicationApps.size()-1; i++){
+                appNames.append((i+1) +". " +mockApplicationApps.get(i) + " \n");
+            }
+            allAppsName.setText(appNames.toString());
+            AlertDialog alert = alertBuilder.create();
             alert.show();
         }
 

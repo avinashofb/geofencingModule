@@ -22,6 +22,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -120,10 +121,10 @@ public class MapUtils {
             return true;
     }
 
-    public static String areThereMockPermissionApps(Context context) {
+    public static List<String> areThereMockPermissionApps(Context context) {
         int count = 0;
 
-        String applicationName = "";
+        List<String> applicationName = new ArrayList<>();
         PackageManager pm = context.getPackageManager();
         List<ApplicationInfo> packages =
                 pm.getInstalledApplications(PackageManager.GET_META_DATA);
@@ -141,7 +142,7 @@ public class MapUtils {
                         if (requestedPermissions[i].equals("android.permission.ACCESS_MOCK_LOCATION") && !applicationInfo.packageName.equals(context.getPackageName())) {
                             if(!(applicationInfo.packageName.contains("com.android"))) {
                                 count++;
-                                applicationName = (String) pm.getApplicationLabel(pm.getApplicationInfo(applicationInfo.packageName, PackageManager.GET_META_DATA));
+                                applicationName.add((String) pm.getApplicationLabel(pm.getApplicationInfo(applicationInfo.packageName, PackageManager.GET_META_DATA)));
                             }
                         }
                     }
