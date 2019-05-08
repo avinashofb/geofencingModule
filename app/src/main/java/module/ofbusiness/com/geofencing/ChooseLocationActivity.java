@@ -98,15 +98,15 @@ public class ChooseLocationActivity extends AppCompatActivity implements MapWrap
         if (mockApplicationApps != null && mockApplicationApps.size() > 0) {
             AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
             LayoutInflater inflater = this.getLayoutInflater();
-            View dialogView= inflater.inflate(R.layout.dialog_layout, null);
-            TextView allAppsName = (TextView)dialogView.findViewById(R.id.apps_name);
+            View dialogView = inflater.inflate(R.layout.dialog_layout, null);
+            TextView allAppsName = (TextView) dialogView.findViewById(R.id.apps_name);
             alertBuilder.setView(dialogView);
             alertBuilder.setCancelable(false);
 
             StringBuilder appNames = new StringBuilder();
             appNames.append(" Uninstall the following apps: \n\n");
-            for(int i=0; i<= mockApplicationApps.size()-1; i++){
-                appNames.append((i+1) +". " +mockApplicationApps.get(i) + " \n");
+            for (int i = 0; i <= mockApplicationApps.size() - 1; i++) {
+                appNames.append((i + 1) + ". " + mockApplicationApps.get(i) + " \n");
             }
             allAppsName.setText(appNames.toString());
             AlertDialog alert = alertBuilder.create();

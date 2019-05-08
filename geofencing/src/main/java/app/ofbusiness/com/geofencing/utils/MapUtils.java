@@ -126,23 +126,20 @@ public class MapUtils {
 
         List<String> applicationName = new ArrayList<>();
         PackageManager pm = context.getPackageManager();
-        List<ApplicationInfo> packages =
-                pm.getInstalledApplications(PackageManager.GET_META_DATA);
+        List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
 
         for (ApplicationInfo applicationInfo : packages) {
             try {
-                PackageInfo packageInfo = pm.getPackageInfo(applicationInfo.packageName,
-                        PackageManager.GET_PERMISSIONS);
+                PackageInfo packageInfo = pm.getPackageInfo(applicationInfo.packageName, PackageManager.GET_PERMISSIONS);
 
                 // Get Permissions
                 String[] requestedPermissions = packageInfo.requestedPermissions;
-
-                if (requestedPermissions != null) {
-                    for (int i = 0; i < requestedPermissions.length; i++) {
-                        if (requestedPermissions[i].equals("android.permission.ACCESS_MOCK_LOCATION") && !applicationInfo.packageName.equals(context.getPackageName())) {
-                            if(!(applicationInfo.packageName.contains("com.android"))) {
-                                count++;
-                                applicationName.add((String) pm.getApplicationLabel(pm.getApplicationInfo(applicationInfo.packageName, PackageManager.GET_META_DATA)));
+                if (!((applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0)) {
+                    if (requestedPermissions != null) {
+                        for (int i = 0; i < requestedPermissions.length; i++) {
+                            if (requestedPermissions[i].equals("android.permission.ACCESS_MOCK_LOCATION") && !applicationInfo.packageName.equals(context.getPackageName())) {
+                                    count++;
+                                    applicationName.add((String) pm.getApplicationLabel(pm.getApplicationInfo(applicationInfo.packageName, PackageManager.GET_META_DATA)));
                             }
                         }
                     }
