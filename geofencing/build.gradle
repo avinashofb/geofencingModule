@@ -40,4 +40,5 @@ dependencies {
     implementation 'com.android.support:support-v4:27.0.0'
     implementation 'com.karumi:dexter:4.1.0'
     implementation 'com.android.support:design:27.0.0'
+    implementation 'com.githang:viewpagerindicator:2.4.2@aar'
 }

@@ -42,8 +42,6 @@ import app.ofbusiness.com.geofencing.module.GeoFencingHelperModule;
 import app.ofbusiness.com.geofencing.module.GeoFencingPermissionModule;
 import app.ofbusiness.com.geofencing.utils.MapUtils;
 
-import static app.ofbusiness.com.geofencing.utils.MapUtils.areThereMockPermissionApps;
-
 public class ChooseLocationActivity extends AppCompatActivity implements MapWrapperLayout.OnDragListener, OnMapReadyCallback {
 
     private GoogleMap googleMap;
