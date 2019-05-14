@@ -1,21 +1,29 @@
-package module.ofbusiness.com.geofencing;
+package app.ofbusiness.com.geofencing;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -32,6 +40,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.viewpagerindicator.CirclePageIndicator;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -41,9 +50,9 @@ import java.util.List;
 
 import app.ofbusiness.com.geofencing.utils.MapUtils;
 
+import static android.app.Activity.RESULT_OK;
 
-public class GeoTaggingActivity extends AppCompatActivity implements OnMapReadyCallback, View.OnClickListener {
-
+public class UploadImageFragment extends Fragment implements OnMapReadyCallback, View.OnClickListener {
 
     private static final int CAMERA_REQUEST_CODE = 123;
     private static final String TAG = "UPLOAD_GEOTAG_IMAGE_ACTIVITY";
@@ -62,14 +71,20 @@ public class GeoTaggingActivity extends AppCompatActivity implements OnMapReadyC
     private static final long UPDATE_LOCATION_INTERVAL = 120 * 1000;
     private static final long UPDATE_LOCATION_FAST_INTERVAL = 120 * 1000;
 
+    UploadImageFragmentCallbacks uploadImageFragmentCallbacks;
+    SetFragmentTheme setFragmentTheme;
+
     View contentContainer;
     ImageView uploadImage;
     ViewPager imageViewPager;
     TextView empityVpImageView;
     ProgressBar progressBar;
     Button uploadDocumentBt;
-    //@BindView(R.id.circle_page_indicator)
-    //CirclePageIndicator circlePageIndicator;
+    CirclePageIndicator circlePageIndicator;
+
+    public void UploadImageFragment(){
+
+    }
 
     private String imagePath = "";
     private GoogleMap googleMap;
@@ -85,27 +100,55 @@ public class GeoTaggingActivity extends AppCompatActivity implements OnMapReadyC
     //private List<GeotaggedImageDocumentDto> geotaggedImageDocumentDtos = new ArrayList<>();
     private ClickedImageVpAdapter clickedImageVpAdapter;
 
+    private Activity activity;
+    private File finalFile;
+    private GeoTaggedImageMeta geoTaggedImageMeta;
+
+    public UploadImageFragment() {
+
+    }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.upload_image_activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            uploadImageFragmentCallbacks = (UploadImageFragmentCallbacks) context;
+            setFragmentTheme = (SetFragmentTheme) context;
+        } catch (ClassCastException castException) {
+            /** The activity does not implement the listener. */
+        }
+    }
 
-        contentContainer = (View) findViewById(R.id.cl_root_container);
-        uploadImage = (ImageView) findViewById(R.id.click_image_iv);
-        imageViewPager = findViewById(R.id.clicked_image_viewpager);
-        empityVpImageView = findViewById(R.id.empty_view);
-        progressBar = findViewById(R.id.btn_loading);
-        uploadDocumentBt = findViewById(R.id.upload_documents_bt);
-       // circlePageIndicator = findViewById(R.id.circle_page_indicator);
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+        View view =  inflater.inflate(R.layout.upload_image_fragment, container, false);
+        contentContainer = (View) view.findViewById(R.id.cl_root_container);
+        uploadImage = (ImageView) view.findViewById(R.id.click_image_iv);
+        imageViewPager = view.findViewById(R.id.clicked_image_viewpager);
+        empityVpImageView = view.findViewById(R.id.empty_view);
+        progressBar = view.findViewById(R.id.btn_loading);
+        uploadDocumentBt = view.findViewById(R.id.upload_documents_bt);
+        circlePageIndicator = view.findViewById(R.id.circle_page_indicator);
+        return view;
+    }
 
-        clickedImageVpAdapter = new ClickedImageVpAdapter(getSupportFragmentManager());
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        clickedImageVpAdapter = new ClickedImageVpAdapter(getActivity().getSupportFragmentManager());
         imageViewPager.setAdapter(clickedImageVpAdapter);
+        circlePageIndicator.setViewPager(imageViewPager);
+        circlePageIndicator.setStrokeColor(ContextCompat.getColor(getActivity(), R.color.circleStrokeColor));
+        circlePageIndicator.setSnap(true);
 
-//        circlePageIndicator.setViewPager(imageViewPager);
-//        circlePageIndicator.setFillColor(ContextCompat.getColor(this, R.color.colorPrimary));
-//        circlePageIndicator.setStrokeColor(ContextCompat.getColor(this, R.color.dark_grey));
-//        circlePageIndicator.setSnap(true);
-
+        if (setFragmentTheme != null) {
+            circlePageIndicator.setFillColor(setFragmentTheme.setPrimaryColor());
+        } else {
+            circlePageIndicator.setFillColor(Color.parseColor("#000000"));
+        }
 //        if (getIntent().getExtras() != null) {
 //            if (getIntent().hasExtra(ARG_SELECTED_LONG)) {
 //                selectedLong = getIntent().getDoubleExtra(ARG_SELECTED_LONG, 0);
@@ -131,72 +174,10 @@ public class GeoTaggingActivity extends AppCompatActivity implements OnMapReadyC
             }
         });
 
-//        uploadDocumentBt.setOnClickListener(v -> {
-//            if (geotaggedImageDocumentDtos.size() > 0) {
-//
-//                progressBar.setVisibility(View.VISIBLE);
-//                Observable<ResponseWrapper<List<MinCreateDocumentDto>>> observable = Repository.getInstance()
-//                        .uploadImageToS3(applicationId, geotaggedImageDocumentDtos)
-//                        .subscribeOn(Schedulers.io())
-//                        .observeOn(AndroidSchedulers.mainThread());
-//
-//                observables.add(observable);
-//
-//                observable.subscribe(response -> {
-//                    progressBar.setVisibility(View.GONE);
-//                    imageUploadedSuccessfully();
-//                }, throwable -> {
-//                    progressBar.setVisibility(View.GONE);
-//                    displayInfo("Could not upload Document - " + throwable.getLocalizedMessage());
-//                    AppLog.i(TAG, "Could not upload Document - ", throwable);
-//                });
-//            } else {
-//                Utils.showCustomToast(UploadGeotaggedImageActivity.this, "Please click image to upload", Toast.LENGTH_SHORT, false);
-//            }
-//        });
-
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
+        mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
-
     }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (fusedLocationClient != null) {
-            fusedLocationClient.removeLocationUpdates(mapLocationCallback);
-        }
-    }
-
-
-//    @Override
-//    protected void bindViews() {
-//        setSupportActionBar(toolbar);
-//        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
-//        toolbar.setNavigationOnClickListener(v -> onBackPressed());
-//        toolbar.setTitle("Upload Image");
-//    }
-
-//    private void imageUploadedSuccessfully() {
-//        android.app.AlertDialog.Builder alertBuilder = new android.app.AlertDialog.Builder(this);
-//        alertBuilder.setCancelable(true);
-//        alertBuilder.setTitle("Success !");
-//        alertBuilder.setMessage("Image has been uploaded successfully.");
-//        //android.app.AlertDialog alert = alertBuilder.create();
-//        alertBuilder.setPositiveButton("OK", (dialog, which) -> {
-//            Intent returnIntent = new Intent();
-//            setResult(Activity.RESULT_OK, returnIntent);
-//            finish();
-//        });
-//        alertBuilder.setOnCancelListener(dialog -> {
-//            Intent returnIntent = new Intent();
-//            setResult(Activity.RESULT_OK, returnIntent);
-//            finish();
-//        });
-//        alertBuilder.show();
-//    }
-
 
     private void addTab(ViewPager viewPager, String filePath, String fileName, GeoTaggedImageMeta geoTaggedImageMeta) {
         Bundle bundle = new Bundle();
@@ -207,10 +188,9 @@ public class GeoTaggingActivity extends AppCompatActivity implements OnMapReadyC
         clickedImageFragment.setArguments(bundle);
         clickedImageVpAdapter.addFrag(clickedImageFragment, fileName);
         viewPager.setAdapter(clickedImageVpAdapter);
+
         viewPager.setCurrentItem(0);
-//        if(geotaggedImageDocumentDtos.size() == 1){
-//            updateMapView(0);
-//        }
+        //updateMapView(0);
     }
 
     private void updateMapView(int position) {
@@ -226,11 +206,6 @@ public class GeoTaggingActivity extends AppCompatActivity implements OnMapReadyC
         }
     }
 
-//    @Override
-//    protected View getRootView() {
-//        return appBarLayout;
-//    }
-
 //    public static Intent newIntent(Context context, double lat, double longt, String applicationId) {
 //        Intent intent = new Intent(context, UploadGeotaggedImageActivity.class);
 //        intent.putExtra(ARG_SELECTED_LAT, lat);
@@ -245,7 +220,7 @@ public class GeoTaggingActivity extends AppCompatActivity implements OnMapReadyC
         initMap(googleMap);
         MapUtils.addMarker(selectedLat, selectedLong, "Selected Location", mapMarker, googleMap, BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
         MapUtils.moveCameraToLocation(selectedLat, selectedLong, googleMap);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
         fusedLocationClient.requestLocationUpdates(locationRequest, mapLocationCallback, Looper.myLooper());
@@ -275,16 +250,16 @@ public class GeoTaggingActivity extends AppCompatActivity implements OnMapReadyC
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.click_image_iv:
-                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE);
-                break;
+        int i = v.getId();
+        if (i == R.id.click_image_iv) {
+            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE);
+
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         String path = null;
         switch (requestCode) {
@@ -292,12 +267,9 @@ public class GeoTaggingActivity extends AppCompatActivity implements OnMapReadyC
                 if (resultCode == RESULT_OK) {
                     // CALL THIS METHOD TO GET THE URI FROM THE BITMAP
                     Bitmap photo = (Bitmap) data.getExtras().get("data");
-                    Uri tempUri = getImageUri(getApplicationContext(), photo);
+                    Uri tempUri = getImageUri(getActivity().getApplicationContext(), photo);
                     // CALL THIS METHOD TO GET THE ACTUAL PATH
-                    File finalFile = new File(getRealPathFromURI(tempUri));
-//                    if(finalFile != null){
-//                        path = finalFile.toString();
-                    //}
+                    finalFile = new File(getRealPathFromURI(tempUri));
                     if (finalFile != null) {
                         double geotagLat;
                         double geotagLong;
@@ -325,17 +297,17 @@ public class GeoTaggingActivity extends AppCompatActivity implements OnMapReadyC
                         imageViewPager.setVisibility(View.VISIBLE);
                         empityVpImageView.setVisibility(View.GONE);
 
-                        GeoTaggedImageMeta geoTaggedImageMeta = new GeoTaggedImageMeta(
+                        geoTaggedImageMeta = new GeoTaggedImageMeta(
                                 getDisplacement(geotagLat, geotagLong),
-                                getAddress(geotagLat, geotagLong, this),
+                                getAddress(geotagLat, geotagLong, getActivity()),
                                 selectedLat,
                                 selectedLong,
                                 geotagLat,
                                 geotagLong,
                                 isGeotagged
                         );
-                        addTab(imageViewPager, finalFile.toString(), finalFile.getName(), geoTaggedImageMeta);
-//                        startUpload(path, DOCUMENT_GROUP, 1, filePath, geoTaggedImageMeta);
+
+                        uploadImageFragmentCallbacks.addTab();
                     }
                 }
                 break;
@@ -352,7 +324,7 @@ public class GeoTaggingActivity extends AppCompatActivity implements OnMapReadyC
     }
 
     public String getRealPathFromURI(Uri uri) {
-        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+        Cursor cursor = getActivity().getContentResolver().query(uri, null, null, null, null);
         cursor.moveToFirst();
         int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
         return cursor.getString(idx);
@@ -374,6 +346,16 @@ public class GeoTaggingActivity extends AppCompatActivity implements OnMapReadyC
         }
     }
 
+    public void addClickedImageFragment(){
+        addTab(imageViewPager, finalFile.toString(), finalFile.getName(), geoTaggedImageMeta);
+    }
 
+    public interface UploadImageFragmentCallbacks {
+        public void addTab();
+    }
+
+    public interface SetFragmentTheme{
+        public int setPrimaryColor();
+        
+    }
 }
-

@@ -26,7 +26,7 @@ public class GeoFencingHelperModule {
 
     private LocationPickerListener locationPickerListener;
     public GoogleMap googleMap;
-    private Activity activity;
+    public Activity activity;
     public Location lastKnownLocation;
 
     private double circleRadius;

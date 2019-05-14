@@ -1,4 +1,4 @@
-package module.ofbusiness.com.geofencing;
+package app.ofbusiness.com.geofencing;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,11 +12,11 @@ import android.widget.TextView;
 
 import java.io.File;
 
-import static module.ofbusiness.com.geofencing.GeoTaggingActivity.ARG_FILE_NAME;
-import static module.ofbusiness.com.geofencing.GeoTaggingActivity.ARG_FILE_PATH;
-import static module.ofbusiness.com.geofencing.GeoTaggingActivity.ARG_IMG_INFO_DTO;
-
 public class ClickedImageFragment extends Fragment {
+
+    public static final String ARG_FILE_PATH = "filePath";
+    public static final String ARG_FILE_NAME = "fileName";
+    public static final String ARG_IMG_INFO_DTO = "imgInfo";
 
     public String filePath, fileName;
     public GeoTaggedImageMeta geoTaggedImageMeta;

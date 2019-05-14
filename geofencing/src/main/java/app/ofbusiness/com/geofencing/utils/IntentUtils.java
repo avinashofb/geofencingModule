@@ -1,4 +1,4 @@
-package module.ofbusiness.com.geofencing;
+package app.ofbusiness.com.geofencing.utils;
 
 import android.app.Activity;
 import android.content.Intent;

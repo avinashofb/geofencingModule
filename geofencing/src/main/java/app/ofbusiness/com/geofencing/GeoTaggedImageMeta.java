@@ -1,4 +1,4 @@
-package module.ofbusiness.com.geofencing;
+package app.ofbusiness.com.geofencing;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

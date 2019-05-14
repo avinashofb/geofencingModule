@@ -1,4 +1,4 @@
-package module.ofbusiness.com.geofencing;
+package app.ofbusiness.com.geofencing;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
