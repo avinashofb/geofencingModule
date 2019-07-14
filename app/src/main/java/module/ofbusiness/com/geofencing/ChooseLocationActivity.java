@@ -8,9 +8,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
 import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -41,8 +41,6 @@ import app.ofbusiness.com.geofencing.listener.MapPermissionListener;
 import app.ofbusiness.com.geofencing.module.GeoFencingHelperModule;
 import app.ofbusiness.com.geofencing.module.GeoFencingPermissionModule;
 import app.ofbusiness.com.geofencing.utils.MapUtils;
-
-import static app.ofbusiness.com.geofencing.utils.MapUtils.areThereMockPermissionApps;
 
 public class ChooseLocationActivity extends AppCompatActivity implements MapWrapperLayout.OnDragListener, OnMapReadyCallback {
 
